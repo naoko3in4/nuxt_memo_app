@@ -7,42 +7,42 @@
         <button @click="addMemo()">Save</button>
       </div>
     </div>
-    <ul
-      v-for="(item, index) in memoList"
-      :key="index"
-    >
-      <li>
-        <span>{{ item.text }}</span>
-        <span>{{ item.date | dateConvert}}</span>
-        <!-- 2019-07-27 00:00  -->
-        <span @click="deleteMemo(index)">x</span>
-      </li>
-    </ul>
+
+    <!-- 閉じタグなし MemoListから来ているケバブケース -->
+    <!-- HTMLの属性とJSの変数 -->
+    <!-- @deleteは、ただのきっかけでscript内のdeleteMemoメソッドに伝えているだけ-->
+    <memo-list
+      :memo-contents="memoContents"
+      @delete="deleteMemo()"
+    />
   </div>
 </template>
 ​
 <script>
+// MemoList.vueからimportしたら、exportdefaultの中にcompornentとして記述
+import MemoList from '~/components/MemoList'
+
+
 export default {
+  components: {
+    MemoList
+  },
   data: () => ({
-    memoList: [],
+    memoContents: [],
     inputText: ""
   }),
-  filters: {
-    dateConvert: function (value) {
-      const date = new Date(value)
-      return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`
-    }
-  },
   methods: {
     addMemo() {
-      this.memoList.push({
+      this.memoContents.push({
         text: this.inputText,
         date: new Date()
       })
       this.inputText = ""
     },
+    // memoContensを消すものなのでindex.vueにあるべき
+    // 子(MemoList.vueからの)のindexを受け取っている
     deleteMemo(index) {
-      this.memoList.splice(index,1)
+      this.memoContents.splice(index,1)
     }
   }
 }
@@ -51,11 +51,6 @@ export default {
 <style>
 .container {
   margin: 0 auto;
-  /* min-height: 100vh;
-  display: flex; */
-  /* justify-content: center; */
-  /* align-items: center;
-  text-align: center; */
 }
 ​
 .input_container {
